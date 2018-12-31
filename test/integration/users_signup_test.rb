@@ -31,6 +31,7 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     end
     follow_redirect!
     assert_template 'users/show'
+    assert logged_in?
     # 成功時のflash messageの表示確認
     assert_not flash.empty?
     assert_select 'div.alert.alert-success'
