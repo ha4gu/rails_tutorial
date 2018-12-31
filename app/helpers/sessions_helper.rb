@@ -12,4 +12,9 @@ module SessionsHelper
     end
   end
 
+  # ログイン済みかどうかを返す
+  def logged_in?
+    !current_user.nil?
+  end
+
 end
