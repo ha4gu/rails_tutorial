@@ -35,6 +35,11 @@ class User < ApplicationRecord
     update_attribute(:remember_digest, User.digest(self.remember_token))
   end
 
+  # トークンのハッシュ値を消去する
+  def forget
+    update_attribute(:remember_digest, nil)
+  end
+
   # 渡されたトークンが有効なトークンかどうかを判断する
   def authenticated?(remember_token)
     BCrypt::Password.new(self.remember_digest).is_password?(remember_token)
