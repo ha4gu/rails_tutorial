@@ -1,5 +1,8 @@
 class User < ApplicationRecord
 
+  # トークンを保持するための remember_token 属性を定義
+  attr_accessor :remember_token
+
   # force email strings to be saved as lower-case
   before_save { self.email = email.downcase }
 
@@ -19,6 +22,22 @@ class User < ApplicationRecord
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
                                                   BCrypt::Engine.cost
     BCrypt::Password.create(string, cost: cost)
+  end
+
+  # トークンとして用いる、22桁のランダム文字列を返す
+  def self.new_token
+    SecureRandom.urlsafe_base64
+  end
+
+  # 新たなトークンを用意し、そのハッシュ値をDBに格納する
+  def remember
+    self.remember_token = User.new_token
+    update_attribute(:remember_digest, User.digest(self.remember_token))
+  end
+
+  # 渡されたトークンが有効なトークンかどうかを判断する
+  def authenticated?(remember_token)
+    BCrypt::Password.new(self.remember_digest).is_password?(remember_token)
   end
 
 end
