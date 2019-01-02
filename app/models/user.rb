@@ -42,6 +42,7 @@ class User < ApplicationRecord
 
   # 渡されたトークンが有効なトークンかどうかを判断する
   def authenticated?(remember_token)
+    return false if remember_digest.nil? # ログアウト済みの特殊ケース
     BCrypt::Password.new(self.remember_digest).is_password?(remember_token)
   end
 
