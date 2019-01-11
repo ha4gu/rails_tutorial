@@ -31,4 +31,31 @@ class UsersEditTest < ActionDispatch::IntegrationTest
     assert_equal email, @user.email
   end
 
+  test "successful edit with friendly forwarding" do
+    # 未ログイン状態のままユーザ編集画面へアクセスする
+    get edit_user_path(@user)
+    # ログイン画面にリダイレクトされる
+    assert_redirected_to login_url
+    # 適切なユーザアカウントでログインする
+    log_in_as(@user)
+    # 元々アクセスしようとしていたユーザ編集画面にリダイレクトされる
+    assert_redirected_to edit_user_path(@user)
+    # 再度適切なユーザアカウントでログインし直す
+    log_in_as(@user)
+    # 今度はログイン後のデフォルトページである特定ユーザ表示画面にリダイレクト
+    assert_redirected_to @user
+    # 以降は上のテストと同じ
+    get edit_user_path(@user)
+    assert_template 'users/edit'
+    name = "Foo Bar"
+    email = "foo@bar.com"
+    patch user_path(@user), params: { user: { name: name, email: email,
+      password: "", password_confirmation: "" } }
+    assert_not flash.empty?
+    assert_redirected_to @user
+    @user.reload
+    assert_equal name, @user.name
+    assert_equal email, @user.email
+  end
+
 end
