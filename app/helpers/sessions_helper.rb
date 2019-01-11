@@ -28,6 +28,11 @@ module SessionsHelper
     end
   end
 
+  # 渡されたユーザがログイン中アカウントのユーザと一致しているかを返す
+  def current_user?(user)
+    user == current_user
+  end
+
   # ログイン済みかどうかを返す
   def logged_in?
     !current_user.nil?
