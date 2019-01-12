@@ -1,10 +1,11 @@
 class User < ApplicationRecord
 
-  # トークンを保持するための remember_token 属性を定義
-  attr_accessor :remember_token
+  # トークンを保持するための remember_token 属性、activation_token属性を定義
+  attr_accessor :remember_token, :activation_token
 
   # force email strings to be saved as lower-case
-  before_save { self.email = email.downcase }
+  before_save :downcase_email
+  before_create :create_activation_digest
 
   # validation
   validates :name,  presence: true, length: { maximum: 50 }
@@ -41,9 +42,23 @@ class User < ApplicationRecord
   end
 
   # 渡されたトークンが有効なトークンかどうかを判断する
-  def authenticated?(remember_token)
-    return false if remember_digest.nil? # ログアウト済みの特殊ケース
-    BCrypt::Password.new(self.remember_digest).is_password?(remember_token)
+  def authenticated?(attribute, token)
+    digest = send("#{attribute}_digest")
+    return false if digest.nil? # ログアウト済みの特殊ケース
+    BCrypt::Password.new(digest).is_password?(token)
+  end
+
+  private
+
+  # メールアドレスを小文字にする
+  def downcase_email
+    self.email.downcase!
+  end
+
+  # 有効化トークンとダイジェストを作成し代入する
+  def create_activation_digest
+    self.activation_token = User.new_token
+    self.activation_digest = User.digest(activation_token)
   end
 
 end
