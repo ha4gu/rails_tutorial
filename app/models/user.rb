@@ -48,6 +48,16 @@ class User < ApplicationRecord
     BCrypt::Password.new(digest).is_password?(token)
   end
 
+  # アカウントを有効にする
+  def activate
+    update_columns(activated: true, activated_at: Time.zone.now)
+  end
+
+  # アクティベーションのためのメールを送信する
+  def send_activation_email
+    UserMailer.account_activation(self).deliver_now
+  end
+
   private
 
   # メールアドレスを小文字にする
