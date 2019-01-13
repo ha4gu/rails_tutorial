@@ -31,6 +31,7 @@ class PasswordResetsController < ApplicationController
     elsif @user.update_attributes(user_params)
       # 適切にパスワードの更新ができた場合
       log_in @user
+      @user.update_attribute(:reset_digest, nil)
       flash[:success] = "Password has been reset."
       redirect_to @user
     else
