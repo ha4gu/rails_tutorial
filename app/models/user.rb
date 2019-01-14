@@ -79,6 +79,11 @@ class User < ApplicationRecord
     reset_sent_at < 2.hours.ago
   end
 
+  # ユーザのフィードデータ ※現時点では不完全
+  def feed
+    Micropost.where("user_id = ?", id)
+  end
+
   private
 
   # メールアドレスを小文字にする
