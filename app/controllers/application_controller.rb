@@ -9,4 +9,15 @@ class ApplicationController < ActionController::Base
     render html: "hello world!"
   end
 
+  private
+
+  # ログイン済みかどうかを確認し、未ログインならログインページに飛ばす
+  def logged_in_user
+    unless logged_in?
+      store_location # 元々アクセスしたかったURLをセッションに記憶する
+      flash[:danger] = "Please log in."
+      redirect_to login_url
+    end
+  end
+
 end
