@@ -6,6 +6,7 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+# テスト用のid=1なユーザの作成
 User.create!(name:  "Example User",
   email: "example@railstutorial.org",
   password:              "foobar",
@@ -14,6 +15,7 @@ User.create!(name:  "Example User",
   activated: true,
   activated_at: Time.zone.now)
 
+# 99人分のフェイクユーザの作成
 99.times do |n|
 name  = Faker::Name.name
 email = "example-#{n+1}@railstutorial.org"
@@ -24,4 +26,13 @@ User.create!(name:  name,
     password_confirmation: password,
     activated: true,
     activated_at: Time.zone.now)
+end
+
+# 先頭6人分に対して50個ずつマイクロポストの作成
+users = User.order(:created_at).take(6)
+50.times do
+  content = Faker::Lorem.sentence(5)
+  users.each do |user|
+    user.microposts.create!(content: content)
+  end
 end
