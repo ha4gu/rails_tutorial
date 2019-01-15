@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   # association
   has_many :microposts, dependent: :destroy
+  has_many :active_relationships, class_name: "Relationship",
+    foreign_key: "follower_id", dependent: :destroy
 
   # トークンを保持するための remember_token 属性、activation_token属性を定義
   attr_accessor :remember_token, :activation_token, :reset_token
