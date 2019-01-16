@@ -6,7 +6,7 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-# テスト用のid=1なユーザの作成
+# id=1なユーザの作成
 User.create!(name:  "Example User",
   email: "example@railstutorial.org",
   password:              "foobar",
@@ -36,3 +36,13 @@ users = User.order(:created_at).take(6)
     user.microposts.create!(content: content)
   end
 end
+
+# リレーションシップ
+# 最初のユーザーにユーザー3からユーザー51までをフォローさせ、
+# ユーザー4からユーザー41に最初のユーザーをフォローさせる
+users = User.all
+user  = users.first
+following = users[2..50]
+followers = users[3..40]
+following.each { |followed| user.follow(followed) }
+followers.each { |follower| follower.follow(user) }
